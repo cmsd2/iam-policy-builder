@@ -43,14 +43,14 @@ type AuthPolicy struct {
 
 type Method struct {
 	ResourceArn string
-	Conditions  []string
+	Conditions  interface{}
 }
 
 type Statement struct {
 	Action    string
 	Effect    string
 	Resource  []string
-	Condition []string
+	Condition interface{}
 }
 
 type PolicyDocument struct {
@@ -79,7 +79,7 @@ func NewAuthPolicy(principalId string, awsAccountId string) *AuthPolicy {
 	}
 }
 
-func NewMethod(resourceArn string, conditions []string) *Method {
+func NewMethod(resourceArn string, conditions interface{}) *Method {
 	return &Method{
 		ResourceArn: resourceArn,
 		Conditions:  conditions,
@@ -110,7 +110,7 @@ func StatementsForEffect(effect string, methods []*Method) ([]*Statement, error)
 		}
 
 		for _, method := range methods {
-			if len(method.Conditions) == 0 {
+			if method.Conditions == nil {
 				statement.Resource = append(statement.Resource, method.ResourceArn)
 			} else {
 				conditionalStatement, err := NewEmptyStatement(effect)
@@ -154,15 +154,15 @@ func (p *AuthPolicy) DenyMethod(verb string, resource string) {
 	p.addMethod(Deny, verb, resource, nil)
 }
 
-func (p *AuthPolicy) AllowMethodWithConditions(verb string, resource string, conditions []string) {
+func (p *AuthPolicy) AllowMethodWithConditions(verb string, resource string, conditions interface{}) {
 	p.addMethod(Allow, verb, resource, conditions)
 }
 
-func (p *AuthPolicy) DenyMethodWithConditions(verb string, resource string, conditions []string) {
+func (p *AuthPolicy) DenyMethodWithConditions(verb string, resource string, conditions interface{}) {
 	p.addMethod(Deny, verb, resource, conditions)
 }
 
-func (p *AuthPolicy) addMethod(effect string /* ALLOW|DENY */, verb string /* Http Verb */, resource string, conditions []string) error {
+func (p *AuthPolicy) addMethod(effect string /* ALLOW|DENY */, verb string /* Http Verb */, resource string, conditions interface{}) error {
 	if verb != All && !containsString(verbs, verb) {
 		return ErrInvalidHttpVerb
 	}
