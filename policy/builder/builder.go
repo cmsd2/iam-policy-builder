@@ -59,8 +59,8 @@ type PolicyDocument struct {
 }
 
 type Policy struct {
-	PolicyDocument PolicyDocument
-	PrincipalId    string
+	PolicyDocument PolicyDocument `json:"policyDocument"`
+	PrincipalId    string         `json:"principalId"`
 }
 
 func NewAuthPolicy(principalId string, awsAccountId string) *AuthPolicy {
