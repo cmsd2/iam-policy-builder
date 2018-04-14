@@ -96,7 +96,7 @@ func NewEmptyStatement(effect string) (*Statement, error) {
 		Action:    "execute-api:Invoke",
 		Resource:  make([]string, 0),
 		Effect:    effect,
-		Condition: nil,
+		Condition: make(map[string]string),
 	}, nil
 }
 
